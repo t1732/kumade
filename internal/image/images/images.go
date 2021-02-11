@@ -31,7 +31,7 @@ func GetVPCImages(token string, options ...Option) (*[]image.VPCImage, error) {
 		return nil, err
 	}
 
-	searchOption := &SearchOption{ Status:  "active" }
+	searchOption := &SearchOption{Status: "active"}
 
 	q := u.Query()
 	q.Set("owner", os.Getenv("CONOHA_TENANT_ID"))
@@ -48,8 +48,8 @@ func GetVPCImages(token string, options ...Option) (*[]image.VPCImage, error) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-Auth-Token", token)
-  client := &http.Client{}
-  res, err := client.Do(req)
+	client := &http.Client{}
+	res, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}

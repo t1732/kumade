@@ -9,7 +9,7 @@ import (
 	"github.com/t1732/kumade/internal/image/images"
 )
 
-func GetToken() (*tokens.Token) {
+func GetToken() *tokens.Token {
 	identity, err := tokens.GetToken()
 	if err != nil {
 		fmt.Println("[!] " + err.Error())
@@ -19,7 +19,7 @@ func GetToken() (*tokens.Token) {
 	return identity.Access.Token
 }
 
-func GetVPCImages(token string) (*[]image.VPCImage) {
+func GetVPCImages(token string) *[]image.VPCImage {
 	vpcImages, err := images.GetVPCImages(token)
 	if err != nil {
 		fmt.Println("[!] " + err.Error())

@@ -22,7 +22,7 @@ func GetToken() (*Response, error) {
 
 	auth := &Auth{
 		Credentials: credentials,
-		TenantID: os.Getenv("CONOHA_TENANT_ID"),
+		TenantID:    os.Getenv("CONOHA_TENANT_ID"),
 	}
 
 	requestParams := &RequestParams{

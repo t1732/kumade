@@ -8,7 +8,7 @@ type RequestParams struct {
 // Auth is Struct
 type Auth struct {
 	Credentials *Credentials `json:"passwordCredentials"`
-	TenantID string `json:"tenantId"`
+	TenantID    string       `json:"tenantId"`
 }
 
 // Credentials is struct
