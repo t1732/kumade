@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudfoundry/bytefmt"
+	"code.cloudfoundry.org/bytefmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/t1732/kumade/internal/identify/tokens"
