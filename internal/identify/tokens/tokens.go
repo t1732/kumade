@@ -46,6 +46,10 @@ func GetToken() (*Response, error) {
 		return nil, err
 	}
 
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Token API request error: %s", body)
+	}
+
 	response := &Response{}
 	err = json.Unmarshal(body, response)
 	if err != nil {

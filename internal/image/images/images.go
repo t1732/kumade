@@ -60,6 +60,10 @@ func GetVPCImages(token string, options ...Option) (*[]image.VPCImage, error) {
 		return nil, err
 	}
 
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("Image API request error: %s", body)
+	}
+
 	response := &Response{}
 	err = json.Unmarshal(body, response)
 	if err != nil {
