@@ -9,13 +9,17 @@ import (
 	"github.com/spf13/viper"
 )
 
+const appName = "kumade"
+
 var (
-	cfgFile string
-	rootCmd = &cobra.Command{
-		Use:   "kumade",
-		Short: "Kumade is a comand for ConoHa VPS API",
-		Run: func(cmd *cobra.Command, args []string) {
-		},
+	version  = "dev"
+	revision = "-"
+	cfgFile  string
+	rootCmd  = &cobra.Command{
+		Use:   appName,
+		Short: "CLI for ConoHa API",
+		Long:  "Kumade is a CLI for running the ConoHa API",
+		Run:   run,
 	}
 )
 
@@ -29,7 +33,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.config/kumade/config)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.config/%s/config)", appName))
 }
 
 func initConfig() {
@@ -39,8 +43,8 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		viper.AddConfigPath(home + ".config/kumade/")
-		viper.AddConfigPath("/etc/kumade/")
+		viper.AddConfigPath(home + fmt.Sprintf(".config/%s/", appName))
+		viper.AddConfigPath(fmt.Sprintf("/etc/%s/", appName))
 		viper.SetConfigName("config")
 	}
 
@@ -50,4 +54,8 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+}
+
+func run(cmd *cobra.Command, args []string) {
+	fmt.Println(appName, "[command]")
 }
