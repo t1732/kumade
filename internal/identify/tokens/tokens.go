@@ -3,10 +3,11 @@ package tokens
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
+	"github.com/spf13/viper"
 	"github.com/t1732/kumade/internal/identify"
 )
 
@@ -16,13 +17,13 @@ const ENDPOINT_PATH = "/v2.0/tokens"
 // GetToken return tokens Response
 func GetToken() (*Response, error) {
 	credentials := &Credentials{
-		Username: os.Getenv("CONOHA_USER_NAME"),
-		Password: os.Getenv("CONOHA_PASSWORD"),
+		Username: viper.GetString("user"),
+		Password: viper.GetString("password"),
 	}
 
 	auth := &Auth{
 		Credentials: credentials,
-		TenantID:    os.Getenv("CONOHA_TENANT_ID"),
+		TenantID:    viper.GetString("tenant_id"),
 	}
 
 	requestParams := &RequestParams{

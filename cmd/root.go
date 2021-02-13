@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -24,16 +23,14 @@ var (
 )
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	err := rootCmd.Execute()
+	cobra.CheckErr(err)
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.config/%s/config)", appName))
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.config/%s/config.json)", appName))
 }
 
 func initConfig() {
@@ -43,12 +40,19 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		viper.AddConfigPath(home + fmt.Sprintf(".config/%s/", appName))
+		viper.AddConfigPath(fmt.Sprintf("%s/.config/%s/", home, appName))
 		viper.AddConfigPath(fmt.Sprintf("/etc/%s/", appName))
-		viper.SetConfigName("config")
+		viper.SetConfigName("config.json")
 	}
 
-	viper.SetConfigType("env")
+	viper.SetConfigType("json")
+	viper.SetEnvPrefix(appName)
+	err := viper.BindEnv("user")
+	cobra.CheckErr(err)
+	err = viper.BindEnv("password")
+	cobra.CheckErr(err)
+	err = viper.BindEnv("tenant_id")
+	cobra.CheckErr(err)
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {

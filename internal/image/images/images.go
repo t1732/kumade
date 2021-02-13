@@ -2,11 +2,12 @@ package images
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 
+	"github.com/spf13/viper"
 	"github.com/t1732/kumade/internal/image"
 )
 
@@ -34,7 +35,7 @@ func GetVPCImages(token string, options ...Option) (*[]image.VPCImage, error) {
 	searchOption := &SearchOption{Status: "active"}
 
 	q := u.Query()
-	q.Set("owner", os.Getenv("CONOHA_TENANT_ID"))
+	q.Set("owner", viper.GetString("tenant_id"))
 	for _, option := range options {
 		option(searchOption)
 	}
