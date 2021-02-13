@@ -39,10 +39,7 @@ func tokenCmd() *cobra.Command {
 
 func printToken(short bool) {
 	response, err := tokens.GetToken()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	cobra.CheckErr(err)
 
 	if short {
 		fmt.Print(response.Access.Token.ID)

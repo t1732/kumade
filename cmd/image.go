@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"code.cloudfoundry.org/bytefmt"
@@ -44,20 +43,13 @@ func imagesCmd() *cobra.Command {
 
 func getToken() string {
 	response, err := tokens.GetToken()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
+	cobra.CheckErr(err)
 	return response.Access.Token.ID
 }
 
 func printImages(token string) {
 	imgs, err := images.GetVPCImages(token)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
+	cobra.CheckErr(err)
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"ID", "Name", "Status", "Visibility", "Size", "Created At", "Updated At"})

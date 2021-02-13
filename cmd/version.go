@@ -11,7 +11,7 @@ func init() {
 }
 
 func versionCmd() *cobra.Command {
-	short := false
+	var short bool
 
 	command := &cobra.Command{
 		Use:   "version",
