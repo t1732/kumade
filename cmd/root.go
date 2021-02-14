@@ -6,7 +6,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/t1732/kumade/internal/conoha"
+	"github.com/t1732/kumade/pkg/conoha"
 )
 
 const appName = "kumade"

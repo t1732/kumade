@@ -6,7 +6,7 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"github.com/t1732/kumade/internal/conoha"
+	"github.com/t1732/kumade/pkg/conoha"
 )
 
 var (
