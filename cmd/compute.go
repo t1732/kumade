@@ -11,7 +11,7 @@ import (
 var (
 	computeCmd = &cobra.Command{
 		Use:   "compute",
-		Short: "Compute API",
+		Short: "ConoHa Compute API",
 	}
 )
 
@@ -64,7 +64,7 @@ func deleteVMCmd() *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   "delete [server_id]",
-		Short: "Conoha compute API delete VM",
+		Short: "ConoHa compute API delete VM",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			deleteVM(token, args[0])
