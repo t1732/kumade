@@ -29,7 +29,7 @@ func imagesCmd() *cobra.Command {
 		Short: "ConoHa Image API image list",
 		Run: func(cmd *cobra.Command, args []string) {
 			if token == "" {
-				token = getTokenID()
+				token = GetTokenID()
 			}
 			printImages(token)
 		},
@@ -38,12 +38,6 @@ func imagesCmd() *cobra.Command {
 	command.PersistentFlags().StringVar(&token, "token", "", "API token")
 
 	return command
-}
-
-func getTokenID() string {
-	response, err := conoha.Identify().CreateToken()
-	cobra.CheckErr(err)
-	return response.Access.Token.ID
 }
 
 func printImages(token string) {

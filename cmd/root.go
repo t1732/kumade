@@ -6,6 +6,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/t1732/kumade/internal/conoha"
 )
 
 const appName = "kumade"
@@ -25,6 +26,12 @@ var (
 func Execute() {
 	err := rootCmd.Execute()
 	cobra.CheckErr(err)
+}
+
+func GetTokenID() string {
+	response, err := conoha.Identify().CreateToken()
+	cobra.CheckErr(err)
+	return response.Access.Token.ID
 }
 
 func init() {
