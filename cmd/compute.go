@@ -2,11 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/t1732/kumade/internal/conoha"
+	"github.com/t1732/kumade/internal/kumade"
 )
 
 var (
@@ -48,9 +47,8 @@ func printServers(token string) {
 	if len(*servers) == 0 {
 		fmt.Printf("no servers")
 	} else {
-		table := tablewriter.NewWriter(os.Stdout)
+		table := kumade.NewWriter()
 		table.SetHeader([]string{"ID", "Name"})
-		table.SetBorder(false)
 		for _, sv := range *servers {
 			table.Append([]string{
 				sv.ID,

@@ -1,12 +1,10 @@
 package cmd
 
 import (
-	"os"
-
 	"code.cloudfoundry.org/bytefmt"
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 	"github.com/t1732/kumade/internal/conoha"
+	"github.com/t1732/kumade/internal/kumade"
 )
 
 var (
@@ -44,17 +42,8 @@ func printImages(token string) {
 	imgs, err := conoha.Image(token).GetImages()
 	cobra.CheckErr(err)
 
-	table := tablewriter.NewWriter(os.Stdout)
+	table := kumade.NewWriter()
 	table.SetHeader([]string{"ID", "Name", "Status", "Visibility", "Size", "Created At", "Updated At"})
-	table.SetBorder(false)
-	table.SetAutoWrapText(false)
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
 	for _, img := range *imgs {
 		table.Append([]string{
 			img.ID,
