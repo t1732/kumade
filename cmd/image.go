@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"code.cloudfoundry.org/bytefmt"
 	"github.com/spf13/cobra"
 	"github.com/t1732/kumade/internal/kumade"
@@ -42,18 +44,22 @@ func printImages(token string) {
 	imgs, err := conoha.Image(token).GetImages()
 	cobra.CheckErr(err)
 
-	table := kumade.NewWriter()
-	table.SetHeader([]string{"ID", "Name", "Status", "Visibility", "Size", "Created At", "Updated At"})
-	for _, img := range *imgs {
-		table.Append([]string{
-			img.ID,
-			img.Name,
-			img.Status,
-			img.Visibility,
-			bytefmt.ByteSize(uint64(img.Size)),
-			img.CreatedAt.String(),
-			img.UpdatedAt.String(),
-		})
+	if len(*imgs) == 0 {
+		fmt.Print("no images")
+	} else {
+		table := kumade.NewWriter()
+		table.SetHeader([]string{"ID", "Name", "Status", "Visibility", "Size", "Created At", "Updated At"})
+		for _, img := range *imgs {
+			table.Append([]string{
+				img.ID,
+				img.Name,
+				img.Status,
+				img.Visibility,
+				bytefmt.ByteSize(uint64(img.Size)),
+				img.CreatedAt.String(),
+				img.UpdatedAt.String(),
+			})
+		}
+		table.Render()
 	}
-	table.Render()
 }
