@@ -37,8 +37,6 @@ func GetTokenID() string {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	fmt.Printf("init main")
-
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", fmt.Sprintf("config file (default is $HOME/.config/%s/config.json)", appName))
 }
 
