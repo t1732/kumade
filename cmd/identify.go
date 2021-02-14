@@ -6,7 +6,7 @@ import (
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"github.com/t1732/kumade/internal/identify/tokens"
+	"github.com/t1732/kumade/internal/conoha"
 )
 
 var (
@@ -26,7 +26,7 @@ func tokenCmd() *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   "token",
-		Short: "Conoha VPC API Access Token",
+		Short: "Conoha Identify API create access token",
 		Run: func(cmd *cobra.Command, args []string) {
 			printToken(short)
 		},
@@ -38,7 +38,7 @@ func tokenCmd() *cobra.Command {
 }
 
 func printToken(short bool) {
-	response, err := tokens.GetToken()
+	response, err := conoha.Identify().CreateToken()
 	cobra.CheckErr(err)
 
 	if short {

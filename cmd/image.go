@@ -6,8 +6,7 @@ import (
 	"code.cloudfoundry.org/bytefmt"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"github.com/t1732/kumade/internal/identify/tokens"
-	"github.com/t1732/kumade/internal/image/images"
+	"github.com/t1732/kumade/internal/conoha"
 )
 
 var (
@@ -27,10 +26,10 @@ func imagesCmd() *cobra.Command {
 
 	command := &cobra.Command{
 		Use:   "images",
-		Short: "Get image list",
+		Short: "ConoHa Image API image list",
 		Run: func(cmd *cobra.Command, args []string) {
 			if token == "" {
-				token = getToken()
+				token = getTokenID()
 			}
 			printImages(token)
 		},
@@ -41,14 +40,14 @@ func imagesCmd() *cobra.Command {
 	return command
 }
 
-func getToken() string {
-	response, err := tokens.GetToken()
+func getTokenID() string {
+	response, err := conoha.Identify().CreateToken()
 	cobra.CheckErr(err)
 	return response.Access.Token.ID
 }
 
 func printImages(token string) {
-	imgs, err := images.GetVPCImages(token)
+	imgs, err := conoha.Image(token).GetImages()
 	cobra.CheckErr(err)
 
 	table := tablewriter.NewWriter(os.Stdout)
