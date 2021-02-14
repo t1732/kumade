@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -13,12 +14,13 @@ import (
 
 const (
 	imageAPIHost            = "https://image-service.tyo1.conoha.io/"
-	imageImagesEndpointPath = "/v2.0/images"
+	imageImagesEndpointPath = "/v2/images"
 )
 
 type imageAPIData struct {
 	token    string
 	tenantId string
+	url      *url.URL
 }
 
 type imagesResponse struct {
@@ -43,9 +45,15 @@ type imagesSearchOption struct {
 }
 
 func Image(token string) *imageAPIData {
+	u, err := url.Parse(imageAPIHost)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &imageAPIData{
 		tenantId: viper.GetString("tenant_id"),
 		token:    token,
+		url:      u,
 	}
 }
 
@@ -60,21 +68,18 @@ func ImageStatus(status string) imagesOption {
 //	ステータスを指定して取得する場合
 //	GetImages(ImageStatus("active"))
 func (data *imageAPIData) GetImages(options ...imagesOption) (*[]VMImage, error) {
-	u, err := url.Parse(imageAPIHost + imageImagesEndpointPath)
-	if err != nil {
-		return nil, err
-	}
+	data.url.Path = imageImagesEndpointPath
 
 	searchOption := &imagesSearchOption{Status: "active"}
 
-	q := u.Query()
+	q := data.url.Query()
 	q.Set("owner", data.tenantId)
 	for _, option := range options {
 		option(searchOption)
 	}
-	u.RawQuery = q.Encode()
+	data.url.RawQuery = q.Encode()
 
-	req, err := http.NewRequest("GET", u.String(), nil)
+	req, err := http.NewRequest("GET", data.url.String(), nil)
 	if err != nil {
 		return nil, err
 	}
