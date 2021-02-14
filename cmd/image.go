@@ -12,13 +12,14 @@ import (
 var (
 	imageCmd = &cobra.Command{
 		Use:   "image",
-		Short: "image API",
+		Short: "ConoHa Image API",
 	}
 )
 
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.AddCommand(imagesCmd())
+	imageCmd.AddCommand(deleteImageCmd())
 }
 
 func imagesCmd() *cobra.Command {
@@ -61,5 +62,28 @@ func printImages(token string) {
 			})
 		}
 		table.Render()
+	}
+}
+
+func deleteImageCmd() *cobra.Command {
+	var token string
+
+	command := &cobra.Command{
+		Use:   "delete [image_id]",
+		Short: "ConoHa Image API delete image",
+		Args:  cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			deleteImage(token, args[0])
+		},
+	}
+
+	command.PersistentFlags().StringVar(&token, "token", "", "API token")
+
+	return command
+}
+
+func deleteImage(token string, imageID string) {
+	if err := conoha.Image(token).DeleteImage(imageID); err != nil {
+		cobra.CheckErr(err)
 	}
 }

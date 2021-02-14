@@ -114,7 +114,7 @@ func (data *imageAPIData) GetImages(options ...imagesOption) (*[]VMImage, error)
 
 // VM イメージの削除
 // curl -i -X DELETE -H 'Content-Type: application/json' -H "Accept: application/json" -H "X-Auth-Token: :token" "https://image-service.tyo1.conoha.io/v2/images/:image_id
-func (data *imageAPIData) Delete(imageID string) error {
+func (data *imageAPIData) DeleteImage(imageID string) error {
 	req, err := http.NewRequest("DELETE", fmt.Sprintln(imageAPIHost, imageImagesEndpointPath, "/", imageID), nil)
 	if err != nil {
 		return err
