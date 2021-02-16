@@ -17,8 +17,47 @@ var (
 
 func init() {
 	rootCmd.AddCommand(computeCmd)
+	computeCmd.AddCommand(flavorsCmd())
 	computeCmd.AddCommand(serversCmd())
 	computeCmd.AddCommand(deleteVMCmd())
+}
+
+func flavorsCmd() *cobra.Command {
+	var token string
+
+	command := &cobra.Command{
+		Use:   "flavors",
+		Short: "Compute API flavor list",
+		Run: func(cmd *cobra.Command, args []string) {
+			if token == "" {
+				token = GetTokenID()
+			}
+			printFlavors(token)
+		},
+	}
+
+	command.PersistentFlags().StringVar(&token, "token", "", "API token")
+
+	return command
+}
+
+func printFlavors(token string) {
+	flavors, err := conoha.Compute(token).GetFlavors()
+	cobra.CheckErr(err)
+
+	if len(*flavors) == 0 {
+		fmt.Printf("no flavors")
+	} else {
+		table := kumade.NewWriter()
+		table.SetHeader([]string{"ID", "Name"})
+		for _, sv := range *flavors {
+			table.Append([]string{
+				sv.ID,
+				sv.Name,
+			})
+		}
+		table.Render()
+	}
 }
 
 func serversCmd() *cobra.Command {
