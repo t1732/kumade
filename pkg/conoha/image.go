@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/fatih/structs"
 	"github.com/spf13/viper"
 )
 
@@ -41,7 +42,7 @@ type VMImage struct {
 type imagesOption func(*imagesSearchOption)
 
 type imagesSearchOption struct {
-	Status string
+	Status string `structs:"status"`
 }
 
 func Image(token string) *imageAPIData {
@@ -71,11 +72,17 @@ func (data *imageAPIData) GetImages(options ...imagesOption) (*[]VMImage, error)
 	data.url.Path = imageImagesEndpointPath
 
 	searchOption := &imagesSearchOption{Status: "active"}
+	for _, option := range options {
+		option(searchOption)
+	}
 
 	q := data.url.Query()
 	q.Set("owner", data.tenantId)
-	for _, option := range options {
-		option(searchOption)
+	opts := structs.Map(searchOption)
+	for k, v := range opts {
+		if v.(string) != "" {
+			q.Set(k, v.(string))
+		}
 	}
 	data.url.RawQuery = q.Encode()
 

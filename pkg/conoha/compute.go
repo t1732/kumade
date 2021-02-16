@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/fatih/structs"
 	"github.com/spf13/viper"
 )
 
@@ -67,15 +68,18 @@ func Compute(token string) *computeAPIData {
 func (data *computeAPIData) GetServers(options ...serversOption) (*[]Server, error) {
 	data.url.Path = fmt.Sprintf(computeServersEndpointFormat, data.tenantId)
 
-	searchOption := &serversSearchOption{
-		Name:   "",
-		Status: "",
+	searchOption := &serversSearchOption{}
+	for _, option := range options {
+		option(searchOption)
 	}
 
 	q := data.url.Query()
 	q.Set("owner", data.tenantId)
-	for _, option := range options {
-		option(searchOption)
+	opts := structs.Map(searchOption)
+	for k, v := range opts {
+		if v.(string) != "" {
+			q.Set(k, v.(string))
+		}
 	}
 	data.url.RawQuery = q.Encode()
 
