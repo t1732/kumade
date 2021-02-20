@@ -19,7 +19,6 @@ func init() {
 	rootCmd.AddCommand(computeCmd)
 	computeCmd.AddCommand(flavorsCmd())
 	computeCmd.AddCommand(serversCmd())
-	computeCmd.AddCommand(deleteServerCmd())
 }
 
 func flavorsCmd() *cobra.Command {
@@ -75,6 +74,8 @@ func serversCmd() *cobra.Command {
 	}
 
 	command.PersistentFlags().StringVar(&token, "token", "", "API token")
+
+	command.AddCommand(deleteServerCmd())
 
 	return command
 }

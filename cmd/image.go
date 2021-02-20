@@ -19,7 +19,6 @@ var (
 func init() {
 	rootCmd.AddCommand(imageCmd)
 	imageCmd.AddCommand(imagesCmd())
-	imageCmd.AddCommand(deleteImageCmd())
 }
 
 func imagesCmd() *cobra.Command {
@@ -37,6 +36,8 @@ func imagesCmd() *cobra.Command {
 	}
 
 	command.PersistentFlags().StringVar(&token, "token", "", "API token")
+
+	command.AddCommand(deleteImageCmd())
 
 	return command
 }

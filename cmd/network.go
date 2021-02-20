@@ -18,7 +18,6 @@ var (
 func init() {
 	rootCmd.AddCommand(networkCmd)
 	networkCmd.AddCommand(securityGroupsCmd())
-	networkCmd.AddCommand(deleteSecurityGroupCmd())
 }
 
 func securityGroupsCmd() *cobra.Command {
@@ -38,6 +37,8 @@ func securityGroupsCmd() *cobra.Command {
 
 	command.PersistentFlags().StringVar(&token, "token", "", "API token")
 	command.PersistentFlags().BoolVarP(&infoAll, "all", "a", false, "Prints security group all info")
+
+	command.AddCommand(deleteSecurityGroupCmd())
 
 	return command
 }
@@ -95,7 +96,7 @@ func deleteSecurityGroupCmd() *cobra.Command {
 	var token string
 
 	command := &cobra.Command{
-		Use:   "delete-security-group [security_group_id]",
+		Use:   "delete [security_group_id]",
 		Short: "Network API delete security group",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
