@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
+	"path"
 	"time"
 
 	"github.com/spf13/viper"
@@ -20,6 +23,7 @@ type identifyAPIData struct {
 	user     string
 	password string
 	tenantId string
+	url      *url.URL
 }
 
 type tokensRequestParams struct {
@@ -50,10 +54,16 @@ type Token struct {
 }
 
 func Identify() *identifyAPIData {
+	u, err := url.Parse(identifyAPIHost)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &identifyAPIData{
 		user:     viper.GetString("user"),
 		password: viper.GetString("password"),
 		tenantId: viper.GetString("tenant_id"),
+		url:      u,
 	}
 }
 
@@ -78,8 +88,9 @@ func (data *identifyAPIData) CreateToken() (*tokensResponse, error) {
 		return nil, err
 	}
 
-	endpoint := identifyAPIHost + identifyTokensEndpointPath
-	res, err := http.Post(endpoint, "application/json", bytes.NewBuffer(jsonBytes))
+	data.url.Path = path.Join(identifyTokensEndpointPath)
+
+	res, err := http.Post(data.url.String(), "application/json", bytes.NewBuffer(jsonBytes))
 	if err != nil {
 		return nil, err
 	}
