@@ -19,7 +19,7 @@ func init() {
 	rootCmd.AddCommand(computeCmd)
 	computeCmd.AddCommand(flavorsCmd())
 	computeCmd.AddCommand(serversCmd())
-	computeCmd.AddCommand(deleteVMCmd())
+	computeCmd.AddCommand(deleteServerCmd())
 }
 
 func flavorsCmd() *cobra.Command {
@@ -98,15 +98,15 @@ func printServers(token string) {
 	}
 }
 
-func deleteVMCmd() *cobra.Command {
+func deleteServerCmd() *cobra.Command {
 	var token string
 
 	command := &cobra.Command{
 		Use:   "delete [server_id]",
-		Short: "ConoHa compute API delete VM",
+		Short: "Compute API delete server",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			deleteVM(token, args[0])
+			deleteServer(token, args[0])
 		},
 	}
 
@@ -115,7 +115,7 @@ func deleteVMCmd() *cobra.Command {
 	return command
 }
 
-func deleteVM(token string, serverID string) {
+func deleteServer(token string, serverID string) {
 	if err := conoha.Compute(token).DeleteServer(serverID); err != nil {
 		cobra.CheckErr(err)
 	}
