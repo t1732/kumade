@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/t1732/kumade/internal/kumade"
@@ -19,6 +20,7 @@ func init() {
 	rootCmd.AddCommand(computeCmd)
 	computeCmd.AddCommand(flavorsCmd())
 	computeCmd.AddCommand(serversCmd())
+	computeCmd.AddCommand(serversDetailCmd())
 }
 
 func flavorsCmd() *cobra.Command {
@@ -76,6 +78,7 @@ func serversCmd() *cobra.Command {
 	command.PersistentFlags().StringVar(&token, "token", "", "API token")
 
 	command.AddCommand(deleteServerCmd())
+	command.AddCommand(serversDetailCmd())
 
 	return command
 }
@@ -90,13 +93,61 @@ func printServers(token string) {
 		table := kumade.NewWriter()
 		table.SetHeader([]string{"ID", "Name"})
 		for _, sv := range *servers {
-			table.Append([]string{
-				sv.ID,
-				sv.Name,
-			})
+			table.Append([]string{sv.ID, sv.Name})
 		}
 		table.Render()
 	}
+}
+
+func serversDetailCmd() *cobra.Command {
+	var token string
+
+	command := &cobra.Command{
+		Use:   "detail",
+		Short: "Compute API server detail list",
+		Run: func(cmd *cobra.Command, args []string) {
+			if token == "" {
+				token = GetTokenID()
+			}
+			printServersDetail(token)
+		},
+	}
+
+	command.PersistentFlags().StringVar(&token, "token", "", "API token")
+
+	return command
+}
+
+func printServersDetail(token string) {
+	servers, err := conoha.Compute(token).GetServersDetial()
+	cobra.CheckErr(err)
+
+	if len(*servers) == 0 {
+		fmt.Printf("no servers")
+	} else {
+		table := kumade.NewWriter()
+		table.SetHeader([]string{"ID", "Name", "Status", "MacAddr", "IP", "SecurityGroups"})
+		for _, sv := range *servers {
+			for _, add := range sv.Addresses {
+				table.Append([]string{
+					sv.ID,
+					sv.Name,
+					sv.Status,
+					add.OsExtIPSMacAddr,
+					add.IP,
+				})
+			}
+		}
+		table.Render()
+	}
+}
+
+func MapSecurityGroups(securityGroups *[]conoha.SecurityGroup) {
+	names := []*string{}
+	for _, e := range *securityGroups {
+		names = append(names, e.Name)
+	}
+	return strings.Join(names, ",")
 }
 
 func deleteServerCmd() *cobra.Command {

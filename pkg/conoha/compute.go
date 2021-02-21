@@ -7,22 +7,22 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"path"
 	"strconv"
+	"time"
 
 	"github.com/fatih/structs"
 	"github.com/spf13/viper"
 )
 
 const (
-	computeAPIHost               = "https://compute.tyo1.conoha.io/"
-	computeFlavorsEndpointFormat = "/v2/%s/flavors"
-	computeServersEndpointFormat = "/v2/%s/servers"
-	computeDeleteEndpointFormat  = "/v2/%s/servers/%s"
+	computeAPIHost     = "https://compute.tyo1.conoha.io"
+	computeFlavorsPath = "/flavors"
+	computeServersPath = "/servers"
 )
 
 type computeAPIData struct {
 	token    string
-	tenantId string
 	url      *url.URL
 }
 
@@ -51,6 +51,18 @@ type serversResponse struct {
 type Server struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+	Addresses map[string]Address `json:"addresses"`
+	Status string `json:"status"`
+	SecurityGroups *[]SecurityGroup `json:"security_groups"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+type Address struct {
+	OsExtIPSMacAddr string `json:"OS-EXT-IPS-MAC:mac_addr"`
+	OsExtIPSType string `json:"OS-EXT-ISP:type"`
+	IP string `json:"addr"`
+	Version string `json:"version"`
 }
 
 type serversOption func(*serversSearchOption)
@@ -102,15 +114,16 @@ func Compute(token string) *computeAPIData {
 		log.Fatal(err)
 	}
 
+	u.Path = path.Join("v2", viper.GetString("tenant_id"))
+
 	return &computeAPIData{
 		token:    token,
-		tenantId: viper.GetString("tenant_id"),
 		url:      u,
 	}
 }
 
 func (data *computeAPIData) GetFlavors(options ...flavorsOption) (*[]Flavor, error) {
-	data.url.Path = fmt.Sprintf(computeFlavorsEndpointFormat, data.tenantId)
+	data.url.Path = path.Join(data.url.Path, computeFlavorsPath)
 
 	searchOption := &flavorsSearchOption{}
 	for _, option := range options {
@@ -160,7 +173,18 @@ func (data *computeAPIData) GetFlavors(options ...flavorsOption) (*[]Flavor, err
 }
 
 func (data *computeAPIData) GetServers(options ...serversOption) (*[]Server, error) {
-	data.url.Path = fmt.Sprintf(computeServersEndpointFormat, data.tenantId)
+	return data.getServers(false, options...)
+}
+
+func (data *computeAPIData) GetServersDetial(options ...serversOption) (*[]Server, error) {
+	return data.getServers(true, options...)
+}
+
+func (data *computeAPIData) getServers(detailMode bool, options ...serversOption) (*[]Server, error) {
+	data.url.Path = path.Join(data.url.Path, computeServersPath)
+	if (detailMode) {
+		data.url.Path = path.Join(data.url.Path, "/detail")
+	}
 
 	searchOption := &serversSearchOption{}
 	for _, option := range options {
@@ -168,7 +192,6 @@ func (data *computeAPIData) GetServers(options ...serversOption) (*[]Server, err
 	}
 
 	q := data.url.Query()
-	q.Set("owner", data.tenantId)
 	opts := structs.Map(searchOption)
 	for k, v := range opts {
 		if v.(string) != "" {
@@ -213,7 +236,7 @@ func (data *computeAPIData) GetServers(options ...serversOption) (*[]Server, err
 //	VM 削除
 //	DELETE /v2/​{tenant_id}​/servers/​{server_id}​
 func (data *computeAPIData) DeleteServer(serverID string) error {
-	data.url.Path = fmt.Sprintf(computeDeleteEndpointFormat, data.tenantId, serverID)
+	data.url.Path = path.Join(computeServersPath, serverID)
 	req, err := http.NewRequest("DELETE", data.url.String(), nil)
 	if err != nil {
 		return err
