@@ -33,6 +33,10 @@ func (t *TablewriterWrap) Append(data []string) {
 	t.table.Append(data)
 }
 
+func (t *TablewriterWrap) AppendBulk(data [][]string) {
+	t.table.AppendBulk(data)
+}
+
 func (t *TablewriterWrap) Render() {
 	t.table.Render()
 }

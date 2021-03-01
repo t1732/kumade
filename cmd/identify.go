@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+	"github.com/t1732/kumade/internal/kumade"
 	"github.com/t1732/kumade/pkg/conoha"
 )
 
@@ -47,9 +46,8 @@ func printToken(short bool) {
 		data := [][]string{
 			{response.Access.Token.ID, response.Access.Token.Expires.String()},
 		}
-		table := tablewriter.NewWriter(os.Stdout)
+		table := kumade.NewWriter()
 		table.SetHeader([]string{"ID", "Expired At"})
-		table.SetBorder(false)
 		table.AppendBulk(data)
 		table.Render()
 	}
