@@ -22,8 +22,8 @@ const (
 )
 
 type computeAPIData struct {
-	token    string
-	url      *url.URL
+	token string
+	url   *url.URL
 }
 
 type flavorsOption func(*flavorsSearchOption)
@@ -49,20 +49,20 @@ type serversResponse struct {
 }
 
 type Server struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Addresses map[string]Address `json:"addresses"`
-	Status string `json:"status"`
-	SecurityGroups *[]SecurityGroup `json:"security_groups"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	ID             string             `json:"id"`
+	Name           string             `json:"name"`
+	Addresses      map[string]Address `json:"addresses"`
+	Status         string             `json:"status"`
+	SecurityGroups *[]SecurityGroup   `json:"security_groups"`
+	CreatedAt      time.Time          `json:"created_at"`
+	UpdatedAt      time.Time          `json:"updated_at"`
 }
 
 type Address struct {
 	OsExtIPSMacAddr string `json:"OS-EXT-IPS-MAC:mac_addr"`
-	OsExtIPSType string `json:"OS-EXT-ISP:type"`
-	IP string `json:"addr"`
-	Version string `json:"version"`
+	OsExtIPSType    string `json:"OS-EXT-ISP:type"`
+	IP              string `json:"addr"`
+	Version         string `json:"version"`
 }
 
 type serversOption func(*serversSearchOption)
@@ -117,8 +117,8 @@ func Compute(token string) *computeAPIData {
 	u.Path = path.Join("v2", viper.GetString("tenant_id"))
 
 	return &computeAPIData{
-		token:    token,
-		url:      u,
+		token: token,
+		url:   u,
 	}
 }
 
@@ -182,7 +182,7 @@ func (data *computeAPIData) GetServersDetial(options ...serversOption) (*[]Serve
 
 func (data *computeAPIData) getServers(detailMode bool, options ...serversOption) (*[]Server, error) {
 	data.url.Path = path.Join(data.url.Path, computeServersPath)
-	if (detailMode) {
+	if detailMode {
 		data.url.Path = path.Join(data.url.Path, "/detail")
 	}
 
