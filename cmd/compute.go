@@ -135,6 +135,7 @@ func printServersDetail(token string) {
 					sv.Status,
 					add.OsExtIPSMacAddr,
 					add.IP,
+					joinedSecurityGroups(sv.SecurityGroups),
 				})
 			}
 		}
@@ -142,8 +143,8 @@ func printServersDetail(token string) {
 	}
 }
 
-func MapSecurityGroups(securityGroups *[]conoha.SecurityGroup) {
-	names := []*string{}
+func joinedSecurityGroups(securityGroups *[]conoha.SecurityGroup) string {
+	names := []string{}
 	for _, e := range *securityGroups {
 		names = append(names, e.Name)
 	}
