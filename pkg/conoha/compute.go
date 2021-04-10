@@ -49,20 +49,20 @@ type serversResponse struct {
 }
 
 type Server struct {
-	ID             string             `json:"id"`
-	Name           string             `json:"name"`
-	Addresses      map[string]Address `json:"addresses"`
-	Status         string             `json:"status"`
-	SecurityGroups *[]SecurityGroup   `json:"security_groups"`
-	CreatedAt      time.Time          `json:"created_at"`
-	UpdatedAt      time.Time          `json:"updated_at"`
+	ID             string               `json:"id"`
+	Name           string               `json:"name"`
+	Addresses      map[string][]Address `json:"addresses"`
+	Status         string               `json:"status"`
+	SecurityGroups *[]SecurityGroup     `json:"security_groups"`
+	CreatedAt      time.Time            `json:"created_at"`
+	UpdatedAt      time.Time            `json:"updated_at"`
 }
 
 type Address struct {
 	OsExtIPSMacAddr string `json:"OS-EXT-IPS-MAC:mac_addr"`
 	OsExtIPSType    string `json:"OS-EXT-ISP:type"`
 	IP              string `json:"addr"`
-	Version         string `json:"version"`
+	Version         int    `json:"version"`
 }
 
 type serversOption func(*serversSearchOption)

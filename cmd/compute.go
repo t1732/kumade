@@ -128,15 +128,17 @@ func printServersDetail(token string) {
 		table := kumade.NewWriter()
 		table.SetHeader([]string{"ID", "Name", "Status", "MacAddr", "IP", "SecurityGroups"})
 		for _, sv := range *servers {
-			for _, add := range sv.Addresses {
-				table.Append([]string{
-					sv.ID,
-					sv.Name,
-					sv.Status,
-					add.OsExtIPSMacAddr,
-					add.IP,
-					joinedSecurityGroups(sv.SecurityGroups),
-				})
+			for _, address := range sv.Addresses {
+				for _, a := range address {
+					table.Append([]string{
+						sv.ID,
+						sv.Name,
+						sv.Status,
+						a.OsExtIPSMacAddr,
+						a.IP,
+						joinedSecurityGroups(sv.SecurityGroups),
+					})
+				}
 			}
 		}
 		table.Render()
