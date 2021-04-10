@@ -24,7 +24,7 @@ build:
 	-ldflags "-w -s -X ${PACKAGE}/cmd.version=${VERSION} -X ${PACKAGE}/cmd.revision=${REVISION}" \
 	-a -o ./bin/$(NAME)
 clean:
-	rm $(BINARY_PATH)
+	rm ./bin/$(NAME)
 fmt:
 	$(GO_FORMAT) ./...
 lint:
