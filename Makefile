@@ -6,7 +6,7 @@ GO_TEST   = $(GO) test
 GO_VET    = $(GO) vet
 
 NAME     = "kumade"
-VERSION  = "0.0.1"
+VERSION  = "0.0.2"
 PACKAGE  = github.com/t1732/$(NAME)
 REVISION = $(shell git rev-parse --short HEAD)
 
